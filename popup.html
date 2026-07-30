@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Load Tester</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      width: 320px;
+      background: #1a1a2e;
+      color: #e0e0e0;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      padding: 16px;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    h1 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #ffffff;
+      text-align: center;
+    }
+    label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #a0a0b0;
+      margin-bottom: -8px;
+    }
+    textarea {
+      width: 100%;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #3a3a5c;
+      background: #16213e;
+      color: #e0e0e0;
+      font-size: 0.9rem;
+      resize: vertical;
+    }
+    .interval-section {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    #interval {
+      width: 100%;
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid #3a3a5c;
+      background: #16213e;
+      color: #e0e0e0;
+      font-size: 0.9rem;
+    }
+    .presets {
+      display: flex;
+      gap: 6px;
+    }
+    .presets button {
+      flex: 1;
+      padding: 6px 0;
+      border: none;
+      border-radius: 6px;
+      background: #0f3460;
+      color: #e0e0e0;
+      font-size: 0.75rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .presets button:hover {
+      background: #1a4c8a;
+    }
+    #maxIterations {
+      width: 100%;
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid #3a3a5c;
+      background: #16213e;
+      color: #e0e0e0;
+      font-size: 0.9rem;
+    }
+    .actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .actions button {
+      flex: 1;
+      padding: 10px 0;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    #startBtn {
+      background: #2ecc71;
+      color: #fff;
+    }
+    #startBtn:hover {
+      background: #27ae60;
+    }
+    #startBtn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    #stopBtn {
+      background: #e74c3c;
+      color: #fff;
+    }
+    #stopBtn:hover {
+      background: #c0392b;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Chat Input Load Tester</h1>
+    <label for="message">Message Content</label>
+    <textarea id="message" rows="3" placeholder="Enter test message...">Hello, load test!</textarea>
+
+    <div class="interval-section">
+      <label for="interval">Interval (ms)</label>
+      <input type="number" id="interval" value="1000" min="1" step="100">
+      <div class="presets">
+        <button data-ms="100">0.1s (100ms)</button>
+        <button data-ms="500">0.5s (500ms)</button>
+        <button data-ms="1000">1s (1000ms)</button>
+      </div>
+    </div>
+
+    <label for="maxIterations">Max Iterations <em>(blank = infinite)</em></label>
+    <input type="number" id="maxIterations" placeholder="∞" min="1">
+
+    <div class="actions">
+      <button id="startBtn">▶ Start Execution</button>
+      <button id="stopBtn">■ Force Stop</button>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
