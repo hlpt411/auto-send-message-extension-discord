@@ -1,10 +1,24 @@
 {
   "manifest_version": 3,
-  "name": "Chat Input Load Tester",
-  "version": "1.0.0",
-  "description": "High‑frequency automated load testing of chat input fields with sub‑second precision.",
-  "permissions": ["activeTab", "scripting"],
+  "name": "Chat Sender Pro",
+  "version": "2.0.0",
+  "description": "Gửi tin nhắn hàng loạt / load-test ô nhập chat Discord - UI đẹp, theo dõi trạng thái theo thời gian thực, gửi xoay vòng nhiều tin.",
+  "permissions": ["activeTab", "scripting", "storage"],
+  "background": {
+    "service_worker": "background.js"
+  },
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_title": "Chat Sender Pro",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
   }
 }
