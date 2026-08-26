@@ -1,149 +1,280 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Load Tester</title>
+  <title>Chat Sender Pro</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    :root {
+      --bg: #0e1124;
+      --panel: #171b36;
+      --panel-2: #1e2347;
+      --border: #2b3160;
+      --text: #eceef9;
+      --muted: #9aa1c7;
+      --accent: #6366f1;
+      --accent-2: #8b5cf6;
+      --green: #22c55e;
+      --red: #ef4444;
+      --amber: #f59e0b;
+      --radius: 14px;
     }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      width: 320px;
-      background: #1a1a2e;
-      color: #e0e0e0;
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      padding: 16px;
+      width: 360px;
+      background: radial-gradient(120% 90% at 100% 0%, #1b2050 0%, var(--bg) 55%);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-size: 13px;
+      padding: 0;
     }
-    .container {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+    .app { display: flex; flex-direction: column; padding: 14px; gap: 12px; }
+
+    /* ===== HEADER ===== */
+    .header { display: flex; align-items: center; gap: 10px; }
+    .logo {
+      width: 40px; height: 40px; flex: 0 0 40px;
+      border-radius: 11px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 6px 18px rgba(99, 102, 241, .45);
     }
-    h1 {
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: #ffffff;
-      text-align: center;
+    .brand { flex: 1; min-width: 0; }
+    .brand h1 { font-size: 16px; font-weight: 700; letter-spacing: .2px; }
+    .brand .tag { font-size: 11px; color: var(--muted); }
+    .pill {
+      font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px;
+      padding: 4px 8px; border-radius: 999px; white-space: nowrap;
+      background: #232950; color: var(--muted); border: 1px solid var(--border);
     }
-    label {
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: #a0a0b0;
-      margin-bottom: -8px;
+    .pill.on { background: rgba(34,197,94,.14); color: var(--green); border-color: rgba(34,197,94,.4); }
+    .pill.running { background: rgba(245,158,11,.14); color: var(--amber); border-color: rgba(245,158,11,.45); animation: pulse 1.2s infinite; }
+    @keyframes pulse { 50% { opacity: .65; } }
+
+    /* ===== CARD ===== */
+    .card {
+      background: linear-gradient(180deg, var(--panel), var(--panel-2));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      display: flex; flex-direction: column; gap: 8px;
     }
-    textarea {
+    label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+    .hint { text-transform: none; letter-spacing: 0; font-weight: 400; color: #6f769e; font-size: 10.5px; }
+
+    /* Status card */
+    .status-row { display: flex; align-items: center; gap: 8px; }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: #4a5178; flex: 0 0 9px; }
+    .dot.idle { background: #4a5178; }
+    .dot.on { background: var(--green); box-shadow: 0 0 8px rgba(34,197,94,.8); }
+    .dot.off { background: var(--red); box-shadow: 0 0 8px rgba(239,68,68,.7); }
+    #statusText { flex: 1; font-size: 12px; color: var(--text); }
+    .icon-btn {
+      background: #232950; border: 1px solid var(--border); border-radius: 8px;
+      width: 26px; height: 26px; color: var(--muted); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: .15s;
+    }
+    .icon-btn:hover { color: var(--text); border-color: var(--accent); }
+    .icon-btn:active { transform: rotate(180deg); }
+    .mini-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .mini { background: #141834; border: 1px solid var(--border); border-radius: 9px; padding: 6px 8px; text-align: center; }
+    .mini .k { display: block; font-size: 9.5px; color: #6f769e; text-transform: uppercase; letter-spacing: .4px; }
+    .mini .v { display: block; font-size: 13px; font-weight: 700; margin-top: 2px; }
+    .mini .v.yes { color: var(--green); }
+    .mini .v.no { color: var(--red); }
+
+    /* Message */
+    textarea, input[type="number"] {
       width: 100%;
-      padding: 8px;
-      border-radius: 6px;
-      border: 1px solid #3a3a5c;
-      background: #16213e;
-      color: #e0e0e0;
-      font-size: 0.9rem;
-      resize: vertical;
+      background: #12162e;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      padding: 9px 10px;
+      font-size: 12.5px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
     }
-    .interval-section {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
+    textarea:focus, input[type="number"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(99,102,241,.18);
     }
-    #interval {
-      width: 100%;
-      padding: 6px 8px;
-      border-radius: 6px;
-      border: 1px solid #3a3a5c;
-      background: #16213e;
-      color: #e0e0e0;
-      font-size: 0.9rem;
+    textarea { resize: vertical; min-height: 74px; line-height: 1.45; }
+    .counter { font-size: 10.5px; color: #6f769e; text-align: right; margin-top: -4px; }
+
+    /* Two columns */
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 12px; }
+    .field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+    .chips { display: flex; gap: 4px; flex-wrap: wrap; }
+    .chip {
+      flex: 1; min-width: 0;
+      padding: 5px 0; font-size: 10px; font-weight: 600;
+      background: #141834; color: var(--muted);
+      border: 1px solid var(--border); border-radius: 8px; cursor: pointer;
+      transition: .15s; text-align: center;
     }
-    .presets {
-      display: flex;
-      gap: 6px;
+    .chip:hover { color: var(--text); border-color: var(--accent); background: #1b2150; }
+    .chip.active { background: rgba(99,102,241,.2); color: #c7c9ff; border-color: var(--accent); }
+
+    /* Stats */
+    .stats.hidden { display: none; }
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+    .stat { background: #141834; border: 1px solid var(--border); border-radius: 9px; padding: 7px 4px; text-align: center; }
+    .stat .num { display: block; font-size: 16px; font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
+    .stat .lbl { display: block; font-size: 9px; color: #6f769e; text-transform: uppercase; letter-spacing: .4px; margin-top: 2px; }
+    .progress-wrap { height: 6px; background: #12162e; border-radius: 999px; overflow: hidden; border: 1px solid var(--border); }
+    .progress {
+      height: 100%; width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      border-radius: 999px; transition: width .25s;
     }
-    .presets button {
-      flex: 1;
-      padding: 6px 0;
-      border: none;
-      border-radius: 6px;
-      background: #0f3460;
-      color: #e0e0e0;
-      font-size: 0.75rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: background 0.2s;
+    .error { font-size: 11px; color: #fca5a5; background: rgba(239,68,68,.12); border: 1px solid rgba(239,68,68,.35); border-radius: 8px; padding: 6px 8px; }
+    .error.hidden { display: none; }
+
+    /* Buttons */
+    .actions { display: flex; gap: 8px; }
+    .btn {
+      border: none; border-radius: 11px; padding: 11px 0; flex: 1;
+      font-size: 13px; font-weight: 700; cursor: pointer; color: #fff;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      transition: .18s;
     }
-    .presets button:hover {
-      background: #1a4c8a;
+    .btn:disabled { opacity: .45; cursor: not-allowed; }
+    .btn.primary { background: linear-gradient(135deg, #22c55e, #16a34a); box-shadow: 0 4px 14px rgba(34,197,94,.35); }
+    .btn.primary:hover:not(:disabled) { filter: brightness(1.1); transform: translateY(-1px); }
+    .btn.danger { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 4px 14px rgba(239,68,68,.3); }
+    .btn.danger:hover:not(:disabled) { filter: brightness(1.1); transform: translateY(-1px); }
+    .btn.ghost { background: #232950; border: 1px solid var(--border); color: var(--text); }
+    .btn.ghost:hover:not(:disabled) { border-color: var(--accent); color: #c7c9ff; }
+
+    /* Footer */
+    .foot { display: flex; flex-direction: column; gap: 5px; text-align: center; }
+    .foot .note { font-size: 10px; color: #6f769e; line-height: 1.5; display: flex; align-items: center; justify-content: center; gap: 5px; }
+    .foot .credit { font-size: 10px; color: #4a5178; font-weight: 600; letter-spacing: .3px; }
+
+    /* Toast */
+    .toast {
+      position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%) translateY(20px);
+      background: #232950; border: 1px solid var(--border); color: var(--text);
+      padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: 600;
+      opacity: 0; pointer-events: none; transition: .25s; z-index: 99;
+      max-width: 320px; text-align: center; box-shadow: 0 8px 24px rgba(0,0,0,.5);
     }
-    #maxIterations {
-      width: 100%;
-      padding: 6px 8px;
-      border-radius: 6px;
-      border: 1px solid #3a3a5c;
-      background: #16213e;
-      color: #e0e0e0;
-      font-size: 0.9rem;
-    }
-    .actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 4px;
-    }
-    .actions button {
-      flex: 1;
-      padding: 10px 0;
-      border: none;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: opacity 0.2s;
-    }
-    #startBtn {
-      background: #2ecc71;
-      color: #fff;
-    }
-    #startBtn:hover {
-      background: #27ae60;
-    }
-    #startBtn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-    #stopBtn {
-      background: #e74c3c;
-      color: #fff;
-    }
-    #stopBtn:hover {
-      background: #c0392b;
-    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.success { border-color: rgba(34,197,94,.5); color: #86efac; }
+    .toast.error { border-color: rgba(239,68,68,.5); color: #fca5a5; }
+
+    svg { flex: 0 0 auto; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Chat Input Load Tester</h1>
-    <label for="message">Message Content</label>
-    <textarea id="message" rows="3" placeholder="Enter test message...">Hello, load test!</textarea>
+  <div class="app">
 
-    <div class="interval-section">
-      <label for="interval">Interval (ms)</label>
-      <input type="number" id="interval" value="1000" min="1" step="100">
-      <div class="presets">
-        <button data-ms="100">0.1s (100ms)</button>
-        <button data-ms="500">0.5s (500ms)</button>
-        <button data-ms="1000">1s (1000ms)</button>
+    <!-- HEADER -->
+    <header class="header">
+      <div class="logo">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 2 11 13"></path>
+          <path d="M22 2 15 22l-4-9-9-4Z"></path>
+        </svg>
       </div>
-    </div>
+      <div class="brand">
+        <h1>Chat Sender Pro</h1>
+        <div class="tag">Gửi tin hàng loạt / Load-test chat</div>
+      </div>
+      <span id="statusPill" class="pill">Chưa kết nối</span>
+    </header>
 
-    <label for="maxIterations">Max Iterations <em>(blank = infinite)</em></label>
-    <input type="number" id="maxIterations" placeholder="∞" min="1">
+    <!-- TRẠNG THÁI KẾT NỐI -->
+    <section class="card">
+      <div class="status-row">
+        <span id="statusDot" class="dot idle"></span>
+        <span id="statusText">Chưa kết nối - bấm Bắt đầu để tiêm script</span>
+        <button id="refreshBtn" class="icon-btn" title="Kiểm tra lại">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12a9 9 0 1 1-2.64-6.36"></path><path d="M21 3v6h-6"></path>
+          </svg>
+        </button>
+      </div>
+      <div class="mini-grid">
+        <div class="mini"><span class="k">Ô nhập</span><span id="inputFound" class="v">-</span></div>
+        <div class="mini"><span class="k">Nút gửi</span><span id="submitFound" class="v">-</span></div>
+        <div class="mini"><span class="k">Dòng kế</span><span id="nextLine" class="v">-</span></div>
+      </div>
+    </section>
 
-    <div class="actions">
-      <button id="startBtn">▶ Start Execution</button>
-      <button id="stopBtn">■ Force Stop</button>
-    </div>
+    <!-- TIN NHẮN -->
+    <section class="card">
+      <label for="message">Tin nhắn <span class="hint">(mỗi dòng = 1 tin, gửi xoay vòng)</span></label>
+      <textarea id="message" rows="4" placeholder="Nhập nội dung tin nhắn..."></textarea>
+      <div class="counter"><span id="charCount">0</span> ký tự  |  <span id="lineCount">0</span> dòng</div>
+    </section>
+
+    <!-- CÀI ĐẶT -->
+    <section class="card row-2">
+      <div class="field">
+        <label for="interval">Khoảng cách (ms)</label>
+        <input type="number" id="interval" min="50" step="50" value="1000">
+        <div class="chips">
+          <button class="chip" data-ms="100">0.1s</button>
+          <button class="chip" data-ms="500">0.5s</button>
+          <button class="chip" data-ms="1000">1s</button>
+          <button class="chip" data-ms="2000">2s</button>
+          <button class="chip" data-ms="5000">5s</button>
+        </div>
+      </div>
+      <div class="field">
+        <label for="max">Số lần tối đa <span class="hint">(trống = ∞)</span></label>
+        <input type="number" id="max" min="1" placeholder="∞">
+        <div class="chips">
+          <button class="chip" data-max="10">10</button>
+          <button class="chip" data-max="50">50</button>
+          <button class="chip" data-max="100">100</button>
+          <button class="chip" data-max="">∞</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- THỐNG KÊ -->
+    <section id="statsCard" class="card stats hidden">
+      <div class="stats-grid">
+        <div class="stat"><span id="statCount" class="num">0</span><span class="lbl">Đã gửi</span></div>
+        <div class="stat"><span id="statTime" class="num">0:00</span><span class="lbl">Thời gian</span></div>
+        <div class="stat"><span id="statRate" class="num">0</span><span class="lbl">tin/phút</span></div>
+        <div class="stat"><span id="statSkipped" class="num">0</span><span class="lbl">Bỏ qua</span></div>
+      </div>
+      <div class="progress-wrap"><div id="progressBar" class="progress"></div></div>
+      <div id="errorLine" class="error hidden"></div>
+    </section>
+
+    <!-- NÚT -->
+    <section class="actions">
+      <button id="testBtn" class="btn ghost" title="Gửi thử 1 tin để kiểm tra kết nối">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 3 14 9-14 9 4-9Z"></path></svg>
+        Gửi thử
+      </button>
+      <button id="startBtn" class="btn primary">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l14 8-14 8Z"></path></svg>
+        Bắt đầu
+      </button>
+      <button id="stopBtn" class="btn danger" disabled>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="5" width="14" height="14" rx="2"></rect></svg>
+        Dừng
+      </button>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="foot">
+      <span class="note">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
+        Chỉ dùng cho mục đích hợp pháp. Spam có thể bị Discord khóa tài khoản.
+      </span>
+      <span class="credit">MADE BY PT</span>
+    </footer>
+
+    <div id="toast" class="toast"></div>
   </div>
   <script src="popup.js"></script>
 </body>
